@@ -1,0 +1,7 @@
+pipeline_watch:
+  target: local
+  outputs:
+    local:
+      type: duckdb
+      path: "{{ env_var('PIPELINE_WATCH_DB') }}"
+      threads: 2

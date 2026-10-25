@@ -1,0 +1,31 @@
+{
+  "source": "NYC TLC green taxi",
+  "retrieved_at": "2026-10-25T17:43:17.764117+00:00",
+  "sampling": "First 5,000 source rows per month, original source ordering. This is a row-capped demonstration, not a representative statistical sample.",
+  "files": [
+    {
+      "month": "2025-01",
+      "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/green_tripdata_2025-01.parquet",
+      "full_source_rows": 48326,
+      "bundled_rows": 5000,
+      "source_sha256": "84f3a121667157efcbf012c3566a6065df6f8e0312c678cb2f29cd72cc9c0f10",
+      "snapshot_sha256": "abcd7db376150864d05bfa5fdeba33a4a4bd5420da71f2793fc7e8f8cb7f4dd6"
+    },
+    {
+      "month": "2025-02",
+      "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/green_tripdata_2025-02.parquet",
+      "full_source_rows": 46621,
+      "bundled_rows": 5000,
+      "source_sha256": "b3ffe16a96ba0c68c8a8f8b10f049294ae6eb8d21f2e13b3fdbd452fa2e3498e",
+      "snapshot_sha256": "fa3f5a7c956eddc651f61054fce6763061670eb0c9e8d7a9e44cabad407cd396"
+    },
+    {
+      "month": "2025-03",
+      "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/green_tripdata_2025-03.parquet",
+      "full_source_rows": 51539,
+      "bundled_rows": 5000,
+      "source_sha256": "d58e8d08e5e8a34c12f0d3f5ea049ae25c7c8215218a6af7bf6b8124ecde1c79",
+      "snapshot_sha256": "59bbb7396cdd5b266358007477bbddf55a133a29d47ec73d0bcef2b91d4f1334"
+    }
+  ]
+}

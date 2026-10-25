@@ -1,0 +1,9 @@
+name: pipeline_watch
+version: '1.0.0'
+config-version: 2
+profile: pipeline_watch
+model-paths: [models]
+clean-targets: [target, dbt_packages]
+models:
+  pipeline_watch:
+    +materialized: table
