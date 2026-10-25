@@ -100,6 +100,7 @@ class PipelineTests(unittest.TestCase):
         self.assertIn('trip_distance',changes.column.to_list())
         metrics=run_metrics(runs)
         self.assertTrue(metrics.duration_seconds.ge(0).all())
+        self.assertTrue(pd.isna(metrics.rejection_rate.iloc[-1]))
 
     def test_all_operations_pages_render(self):
         app=AppTest.from_file('app.py',default_timeout=60).run()

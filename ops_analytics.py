@@ -13,8 +13,9 @@ def run_metrics(runs):
     frame=runs.copy()
     frame['duration_seconds']=(frame.finished_at-frame.started_at).dt.total_seconds()
     frame['rows_per_second']=frame.source_rows/frame.duration_seconds.replace(0,np.nan)
-    frame['rejection_rate']=frame.rejected_rows/frame.source_rows.replace(0,np.nan)
-    frame['accepted_rate']=frame.published_rows/frame.source_rows.replace(0,np.nan)
+    measured=(frame.valid_rows+frame.rejected_rows+frame.duplicate_rows).eq(frame.source_rows) & frame.source_rows.gt(0)
+    frame['rejection_rate']=(frame.rejected_rows/frame.source_rows.replace(0,np.nan)).where(measured)
+    frame['accepted_rate']=(frame.published_rows/frame.source_rows.replace(0,np.nan)).where(measured)
     return frame
 
 
