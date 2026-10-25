@@ -4,6 +4,7 @@ import unittest
 import pandas as pd
 from streamlit.testing.v1 import AppTest
 from pipeline import ROOT, run_partition, read_table, safe_query
+from ops_analytics import current_runs, run_metrics, quality_matrix, rejection_profile, schema_changes, partition_profile
 
 
 def fixture():
@@ -68,11 +69,49 @@ class PipelineTests(unittest.TestCase):
     def test_app_bootstrap_and_replay(self):
         app=AppTest.from_file('app.py',default_timeout=45).run()
         self.assertFalse(app.exception)
+        app.switch_page('views/runs.py').run()
         database=app.session_state['warehouse_path']
         before=read_table(database,'SELECT count(*) n FROM silver_trips').n.iloc[0]
         app.button[0].click().run()
         self.assertFalse(app.exception)
         self.assertEqual(before,read_table(database,'SELECT count(*) n FROM silver_trips').n.iloc[0])
+
+    def test_replay_analytics_count_only_current_publications(self):
+        self.run_frame(fixture());self.run_frame(fixture())
+        current=current_runs(self.database)
+        self.assertEqual(len(current),1)
+        self.assertEqual(current.source_rows.sum(),3)
+        self.assertEqual(quality_matrix(self.database).checked_rows.max(),3)
+        profile=partition_profile(self.database)
+        self.assertEqual(profile.trips.sum(),3)
+        self.assertAlmostEqual(profile.revenue.sum(),55.)
+
+    def test_rejection_profiling_preserves_multiple_failure_reasons(self):
+        frame=fixture();frame.loc[0,'trip_distance']=-1;frame.loc[0,'fare_amount']=-1
+        self.run_frame(frame)
+        reasons,details=rejection_profile(self.database)
+        self.assertEqual(len(details),1)
+        self.assertEqual(set(reasons.reason),{'valid_distance','nonnegative_money'})
+
+    def test_schema_change_report_includes_failed_attempts(self):
+        self.run_frame(fixture());self.run_frame(fixture().drop(columns=['trip_distance']))
+        runs=read_table(self.database,'SELECT * FROM pipeline_runs ORDER BY started_at')
+        changes=schema_changes(runs)
+        self.assertIn('trip_distance',changes.column.to_list())
+        metrics=run_metrics(runs)
+        self.assertTrue(metrics.duration_seconds.ge(0).all())
+
+    def test_all_operations_pages_render(self):
+        app=AppTest.from_file('app.py',default_timeout=60).run()
+        for name in ['runs','quality','contracts','warehouse','workbench']:
+            app.switch_page('views/'+name+'.py').run()
+            self.assertFalse(app.exception,name)
+        app.button[0].click().run()
+        self.assertFalse(app.exception)
+        self.assertGreater(len(app.session_state['query_result']),0)
+        app.button[1].click().run()
+        self.assertFalse(app.exception)
+        self.assertGreater(len(app.session_state['query_plan']),20)
 
 
 if __name__=='__main__': unittest.main()

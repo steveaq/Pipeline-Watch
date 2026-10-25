@@ -1,54 +1,39 @@
-# Pipeline Watch design system
+# Pipeline Watch interface notes
 
-## Intent
+The dark palette and monospace navigation draw on Bergside/TypeUI's
+[Mono skill](https://github.com/bergside/awesome-design-skills/blob/main/skills/mono/SKILL.md).
+The interface has six routed pages, with the current warehouse shared across them.
+The overview starts with publication counts and operational evidence.
 
-An operations console in which every state has evidence. Apply the MIT-licensed
-[Mono skill](https://github.com/bergside/awesome-design-skills/blob/main/skills/mono/SKILL.md)
-from TypeUI/Bergside's Awesome Design Skills collection. Adapt its dense, high
-contrast foundations into a restrained dark console rather than a decorative terminal.
+The copy was edited using the local Humanizer skill. Say what the pipeline does,
+what a count includes, and what needs checking. Remove slogans and fictional
+production claims. Do not call a snapshot representative or describe a successful
+publication as proof that every record is correct.
 
-## Foundations
+## Visual system
 
-Background #10191c; surface #142125; raised #19292c; ink #e4efea;
-muted #9db2ae; borders #2c4142. Mint #9fe8c8 indicates published data/actions;
-amber #e8bd79 indicates quarantine/warnings; red #ed9595 indicates failed attempts;
-blue #89b9d6 indicates source input. Use system sans for reading and system mono
-for labels, identifiers and SQL. No external fonts. 8px spacing rhythm, 44px minimum
-targets, 3–5px corners, no decorative animation.
+Background #10191c, surface #142125, text #e4efea, muted #a9bcb6,
+borders #2c4142, mint #9fe8c8, amber #e8bd79, red #ed9595 and blue #89b9d6.
+Use system sans for reading and monospace for SQL and the application name.
+Titles are 38px, captions 12px, and buttons at least 44px high.
 
-## Components
+Colour supplements status text. Red identifies failed attempts; amber indicates
+quarantine or drift. Neither should imply that the current publication disappeared.
+Plots are interactive, with tables or downloads available for detailed inspection.
 
-Masthead identifies the warehouse context. The hero's terminal reports actual
-partition/run state. The control plane names input mode and month before execution.
-Stage cards expose source, quarantine, silver and gold counts. Monitor, quality,
-lineage and SQL tabs reveal evidence behind the summary. Status always has text;
-colour supplements it. Counts come from DuckDB, never hard-coded demo dashboards.
+## Page boundaries
 
-Buttons have hover, keyboard focus, loading and error feedback. A completed run
-names published, replaced and quarantined rows. Failed schema drills explicitly
-preserve published data and remain in the run ledger. Full downloads are explicit;
-the default bundled mode never needs the network. SQL errors remain visible.
+Overview counts current publications. Runs and replay includes every attempt and
+its processing time. Quality separates overlapping rule failures from rejected-row
+counts. Contracts and lineage shows field requirements, drift and source hashes.
+Warehouse analytics uses accepted trips and discloses coverage. SQL and dbt contains
+the restricted query runner, physical plans, model SQL and build results.
 
-## Accessibility and responsive behaviour
+## Check before release
 
-Maintain AA contrast and visible 3px focus. At 640px the hero, controls and stage
-columns stack; labels and SQL remain readable. Native widgets retain labels and
-keyboard interactions. Chart labels and the conservation equation communicate
-without colour. Support reduced motion and data-table/CSV alternatives.
-
-## Content and scope
-
-Use precise states: success, warning, failed, published, replaced, quarantined.
-Distinguish an attempt from a published partition and a snapshot from a full month.
-Never label a pipeline 'healthy' solely because the UI loads. Disclose the row cap,
-session isolation and temporary host filesystem. Keep implementation detail in
-lineage/help, where it explains real operational decisions.
-
-## QA
-
-- Replay a month; silver count must stay stable and the ledger must gain an attempt.
-- Drop a required field; publication must survive and the failed run must be visible.
-- Inspect raw = valid unique + rejected + duplicate counts.
-- Run actual dbt build against the warehouse.
-- Verify SQL rejects writes, multiple statements and external file reads.
-- Check desktop/narrow layouts, status contrast, focus and long run identifiers.
+- Switch pages without losing the current session warehouse.
+- Replay a month and confirm that publication counts stay stable.
+- Run a schema failure and check both the error and retained publication.
+- Check profiling caps, percentile trimming and date-coverage captions.
+- Confirm queries and EXPLAIN reject writes and external access.
+- Inspect desktop/narrow navigation, contrast, focus and reduced-motion support.
