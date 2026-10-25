@@ -1,5 +1,7 @@
 # Pipeline Watch
 
+[Open the live Streamlit app](https://lemsbpfcnjbj5d9agytv6h.streamlit.app/)
+
 ![Application preview](docs/preview.png)
 
 Pipeline Watch ingests NYC green-taxi records into DuckDB and records what happened
